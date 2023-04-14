@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+var favicon = require("serve-favicon");
 const app = express();
 const path = require("path");
 const router = express.Router();
@@ -9,6 +10,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const CourseRouter = require("./Routes/course");
 // //
+const { readdirSync } = require("fs");
 const port = process.env.PORT || 5000;
 // // Connect with database
 const DB =
@@ -24,6 +26,10 @@ mongoose
   .catch((error) => {
     console.log("Database Error ---->", error);
   });
+
+readdirSync("./Routes").map((file) =>
+  app.use("/", require("./Routes/" + file))
+);
 // // Middleware
 app.use(express.json());
 app.use(
@@ -44,7 +50,7 @@ app.get("/", (req, res) => {
     },
   });
 });
-app.use("/", CourseRouter);
+app.use("/", router);
 // Router Handler
 
 // //404 Handler
